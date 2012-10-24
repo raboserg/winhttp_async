@@ -3,17 +3,17 @@
 #include "AsyncWinHttp.h"
 
 static const LPCWSTR userAgent = L"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4";
+//???#define userAgent "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4";
 
 AsyncWinHttp::AsyncWinHttp()
-:session_(NULL), 
-connect_(NULL), 
-request_(NULL), 
-size_(0), 
-totalSize_(0),
-lpBuffer_(NULL),
-//RequesterStatusCallback_(NULL), 
-WinHttpAsyncResult_(NULL), 
-response_raw_(NULL)
+	:session_(NULL), 
+	connect_(NULL), 
+	request_(NULL), 
+	size_(0), 
+	totalSize_(0),
+	lpBuffer_(NULL),
+	WinHttpAsyncResult_(NULL), 
+	response_raw_(NULL)
 {
 	memset(memo_, 0, sizeof(memo_));
 }
@@ -29,13 +29,9 @@ AsyncWinHttp::~AsyncWinHttp()
 	}
 }
 
-//bool AsyncWinHttp::Initialize(ASYNC_WINHTTP_CALLBACK RequesterStatusCallback)
 bool AsyncWinHttp::Initialize(boost::function<void(AsyncWinHttp*)> WinHttpAsyncResult)
-//bool AsyncWinHttp::Initialize(ResultState resultState)
 {
 	WinHttpAsyncResult_ = WinHttpAsyncResult;
-	//boost::function<void()> WinHttpAsyncResult(ResultState);
-	//WinHttpAsyncResult_ = resultState;
 
 	session_ = ::WinHttpOpen(userAgent, 
 		WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
@@ -291,13 +287,11 @@ void AsyncWinHttp::TransferAndDeleteBuffers(LPSTR lpReadBuffer, DWORD dwBytesRea
 	size_ = dwBytesRead;
 
 	if(!lpBuffer_)
-	{
-		// If there is no context buffer, start one with the read data.
+	{	// If there is no context buffer, start one with the read data.
 		lpBuffer_ = lpReadBuffer;
 	}
 	else
-	{
-		// Store the previous buffer, and create a new one big enough to hold the old data and the new data.
+	{	// Store the previous buffer, and create a new one big enough to hold the old data and the new data.
 		LPSTR lpOldBuffer = lpBuffer_;
 		lpBuffer_ = new char[totalSize_ + size_ + 1];
 		memset(lpBuffer_, 0, totalSize_ + size_ + 1);
@@ -369,11 +363,13 @@ VOID AsyncWinHttp::OnDataAvailable(LPVOID lpvStatusInformation)
 			}
 			this->response_raw_ = new std::string(this->lpBuffer_, this->totalSize_);
 			LPWSTR lpWideBuffer = new WCHAR[this->totalSize_ + 1];
+			
 			::MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, 
 				this->lpBuffer_, 
 				this->totalSize_, 
 				lpWideBuffer, 
 				this->totalSize_);
+			
 			lpWideBuffer[this->totalSize_] = 0;
 			this->response_ = lpWideBuffer;
 
@@ -489,7 +485,7 @@ bool AsyncWinHttp::SetTimeout(DWORD timeout)
 	if (session_ == NULL)
 		return false;
 
-	BOOL httpResult = WinHttpSetOption(session_,
+	BOOL httpResult = ::WinHttpSetOption(session_,
 		WINHTTP_OPTION_CONNECT_TIMEOUT,
 		&timeout,
 		sizeof(timeout));
