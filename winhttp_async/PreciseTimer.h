@@ -66,7 +66,7 @@ namespace ext {
 
 	PreciseTimer::Counter PreciseTimer::millisec() {
 		LARGE_INTEGER current;
-		if (__freq.QuadPart == 0 || !QueryPerformanceCounter(¤t)) 
+		if (__freq.QuadPart == 0 || !QueryPerformanceCounter(*t)) 
 			return 0;
 		// Пересчитываем количество системных тиков в миллисекунды.
 		return current.QuadPart / (__freq.QuadPart / 1000);
