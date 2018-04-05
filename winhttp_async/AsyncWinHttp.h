@@ -3,7 +3,7 @@
 #include <string>
 #include <windows.h>
 #include <winhttp.h>
-#include <boost/function.hpp>
+#include <functional>
 
 #pragma comment(lib, "winhttp.lib")
 
@@ -18,8 +18,7 @@ public:
 	AsyncWinHttpErrorInfo() : status_(ASYNC_WINHTTP_OK) {}
 	~AsyncWinHttpErrorInfo() {}
 
-	void set(const int& status, const std::wstring& desc)
-	{
+	void set(const int& status, const std::wstring& desc) {
 		status_ = status;
 		desc_ = desc;
 	}
@@ -33,19 +32,16 @@ private:
 };
 
 //class AsyncWinHttp;
-
-//typedef void (*ASYNC_WINHTTP_CALLBACK)(AsyncWinHttp*);
+//typedef void(*ASYNC_WINHTTP_CALLBACK)(AsyncWinHttp*);
 //boost::function<void()> WinHttpAsyncResult_;
 
-class AsyncWinHttp
-{
+class AsyncWinHttp {
 public:
 	AsyncWinHttp();
 	virtual ~AsyncWinHttp();
 
 	//bool Initialize(ASYNC_WINHTTP_CALLBACK cb);
-	bool Initialize(boost::function<void(AsyncWinHttp*)> WinHttpAsyncResult_);
-	//bool Initialize(ResultState resultState);
+	bool Initialize(std::function<void(AsyncWinHttp*)> f_ResultState);
 	bool SendRequest(PCWSTR szURL);
 	void GetResponse(std::wstring& str) const;
 	void GetResponseHeader(std::wstring& str) const;
@@ -62,8 +58,8 @@ private:
 	DWORD     totalSize_;     // Size of the total data
 	LPSTR     lpBuffer_;      // Buffer for storing read data
 	WCHAR     memo_[256];     // String providing state information
-	//ASYNC_WINHTTP_CALLBACK RequesterStatusCallback_;
-	boost::function<void(AsyncWinHttp*)> WinHttpAsyncResult_;
+	std::function<void(AsyncWinHttp*)> callbackAsyncResultState_;// = ResultState();
+	//ASYNC_WINHTTP_CALLBACK WinHttpAsyncResult_;
 
 	std::wstring response_;
 	std::wstring responseHeader_;
@@ -96,15 +92,12 @@ private:
 class ResultState {
 	HANDLE hEvent_;
 public:
-	ResultState(HANDLE hEvent):hEvent_(hEvent) {}
+	ResultState(HANDLE hEvent) : hEvent_(hEvent) {}
 
 	void operator()(AsyncWinHttp* asyncWinHttp) {
-		if (asyncWinHttp->status.Status() == ASYNC_WINHTTP_ERROR)
-		{
+		if (asyncWinHttp->status.Status() == ASYNC_WINHTTP_ERROR) {
 			printf("%S", asyncWinHttp->status.Desc().c_str());
-		}
-		else
-		{
+		} else {
 			std::string response;
 			asyncWinHttp->GetResponseRaw(response);
 			printf("%s", response.c_str());

@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/winhttp_async/v15
+/Backup
+/Debug/winhttp_async.pdb
+/Debug/winhttp_async.ilk
+/Debug/winhttp_async.exe
+/x64/Debug
+/winhttp_async/x64/Debug
+/winhttp_async/Debug
+/winhttp_async/winhttp_async.vcxproj.user
+/winhttp_async/winhttp_async.vcxproj.filters
+/UpgradeLog.htm
