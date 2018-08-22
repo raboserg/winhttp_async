@@ -14,7 +14,8 @@ HANDLE hEvent = NULL;
 void WinHttp_CallBack(AsyncWinHttp* asyncWinHttp) {
 	if (asyncWinHttp->status.Status() == ASYNC_WINHTTP_ERROR) {
 		printf("%S", asyncWinHttp->status.Desc().c_str());
-	} else {
+	}
+	else {
 		std::string response;
 		asyncWinHttp->GetResponseRaw(response);
 		printf("%s", response.c_str());
@@ -30,7 +31,7 @@ int _tmain(int argc, _TCHAR* argv[]) {
 	http.Initialize(ResultState(hEvent));
 	http.SetTimeout(3 * 60 * 1000);
 	http.SendRequest(signalUrl);
-	
+
 	WaitForSingleObject(hEvent, INFINITE);
 	CloseHandle(hEvent);
 

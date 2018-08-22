@@ -77,11 +77,11 @@ private:
 	bool ReadData();
 	bool QueryData();
 	void Cleanup();
-	
+
 	void TransferAndDeleteBuffers(LPSTR lpReadBuffer, DWORD dwBytesRead);
 
 	static void __stdcall AsyncCallback(
-		HINTERNET hInternet, 
+		HINTERNET hInternet,
 		DWORD_PTR dwContext,
 		DWORD dwInternetStatus,
 		LPVOID lpvStatusInformation,
@@ -97,7 +97,8 @@ public:
 	void operator()(AsyncWinHttp* asyncWinHttp) {
 		if (asyncWinHttp->status.Status() == ASYNC_WINHTTP_ERROR) {
 			printf("%S", asyncWinHttp->status.Desc().c_str());
-		} else {
+		}
+		else {
 			std::string response;
 			asyncWinHttp->GetResponseRaw(response);
 			printf("%s", response.c_str());
