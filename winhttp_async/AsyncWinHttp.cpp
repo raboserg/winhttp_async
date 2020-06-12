@@ -143,7 +143,7 @@ bool AsyncWinHttp::QueryHeaders() {
 	// Use HttpQueryInfo to obtain the size of the buffer.
 	if (!::WinHttpQueryHeaders(this->request_,
 		WINHTTP_QUERY_RAW_HEADERS_CRLF,
-		WINHTTP_HEADER_NAME_BY_INDEX, NULL, &size_, WINHTTP_NO_HEADER_INDEX)) {
+		WINHTTP_HEADER_NAME_BY_INDEX, NULL, &dwSize, WINHTTP_NO_HEADER_INDEX)) {
 		// An ERROR_INSUFFICIENT_BUFFER is expected because you
 		// are looking for the size of the headers.  If any other
 		// error is encountered, display error information.
